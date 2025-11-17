@@ -70,7 +70,9 @@ class User {
           ? DateTime.parse(json['createdAt'] as String)
           : null,
       subscription: json['subscription'] != null
-          ? UserSubscription.fromJson(json['subscription'] as Map<String, dynamic>)
+          ? UserSubscription.fromJson(
+              json['subscription'] as Map<String, dynamic>,
+            )
           : null,
     );
   }
@@ -96,7 +98,10 @@ class User {
 
   /// Returns whether user has complete profile
   bool get hasCompleteProfile =>
-      name != null && birthDate != null && birthTime != null && birthPlace != null;
+      name != null &&
+      birthDate != null &&
+      birthTime != null &&
+      birthPlace != null;
 
   @override
   String toString() => 'User(id: $id, email: $email, name: $name)';

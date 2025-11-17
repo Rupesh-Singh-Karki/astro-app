@@ -16,65 +16,65 @@ class AppTheme {
 
   /// Light color scheme
   static ColorScheme get _lightColorScheme => ColorScheme.light(
-        primary: AppColors.primaryPurple,
-        onPrimary: AppColors.white,
-        primaryContainer: AppColors.purpleContainer,
-        onPrimaryContainer: AppColors.primaryPurpleDark,
-        secondary: AppColors.secondary,
-        onSecondary: AppColors.white,
-        secondaryContainer: AppColors.secondaryContainer,
-        onSecondaryContainer: AppColors.primaryPurpleDark,
-        tertiary: AppColors.tertiary,
-        onTertiary: AppColors.white,
-        tertiaryContainer: AppColors.tertiaryContainer,
-        onTertiaryContainer: AppColors.primaryPurpleDark,
-        error: AppColors.error,
-        onError: AppColors.white,
-        errorContainer: AppColors.errorContainer,
-        onErrorContainer: AppColors.primaryPurpleDark,
-        surface: AppColors.white,
-        onSurface: AppColors.grey900,
-        surfaceContainerHighest: AppColors.grey100,
-        onSurfaceVariant: AppColors.grey700,
-        outline: AppColors.grey400,
-        outlineVariant: AppColors.grey300,
-        shadow: AppColors.shadowMedium,
-        scrim: AppColors.black.withValues(alpha: 0.5),
-        inverseSurface: AppColors.grey900,
-        onInverseSurface: AppColors.grey50,
-        inversePrimary: AppColors.primaryPurpleLight,
-      );
+    primary: AppColors.primaryPurple,
+    onPrimary: AppColors.white,
+    primaryContainer: AppColors.purpleContainer,
+    onPrimaryContainer: AppColors.primaryPurpleDark,
+    secondary: AppColors.secondary,
+    onSecondary: AppColors.white,
+    secondaryContainer: AppColors.secondaryContainer,
+    onSecondaryContainer: AppColors.primaryPurpleDark,
+    tertiary: AppColors.tertiary,
+    onTertiary: AppColors.white,
+    tertiaryContainer: AppColors.tertiaryContainer,
+    onTertiaryContainer: AppColors.primaryPurpleDark,
+    error: AppColors.error,
+    onError: AppColors.white,
+    errorContainer: AppColors.errorContainer,
+    onErrorContainer: AppColors.primaryPurpleDark,
+    surface: AppColors.white,
+    onSurface: AppColors.grey900,
+    surfaceContainerHighest: AppColors.grey100,
+    onSurfaceVariant: AppColors.grey700,
+    outline: AppColors.grey400,
+    outlineVariant: AppColors.grey300,
+    shadow: AppColors.shadowMedium,
+    scrim: AppColors.black.withValues(alpha: 0.5),
+    inverseSurface: AppColors.grey900,
+    onInverseSurface: AppColors.grey50,
+    inversePrimary: AppColors.primaryPurpleLight,
+  );
 
   /// Dark color scheme
   static ColorScheme get _darkColorScheme => ColorScheme.dark(
-        primary: AppColors.primaryPurpleLight,
-        onPrimary: AppColors.primaryPurpleDark,
-        primaryContainer: AppColors.primaryPurpleDark,
-        onPrimaryContainer: AppColors.purpleContainer,
-        secondary: AppColors.secondary,
-        onSecondary: AppColors.white,
-        secondaryContainer: const Color(0xFF7C2D5F),
-        onSecondaryContainer: AppColors.secondaryContainer,
-        tertiary: AppColors.tertiary,
-        onTertiary: AppColors.white,
-        tertiaryContainer: const Color(0xFF164E63),
-        onTertiaryContainer: AppColors.tertiaryContainer,
-        error: const Color(0xFFFF5449),
-        onError: const Color(0xFF690005),
-        errorContainer: const Color(0xFF93000A),
-        onErrorContainer: AppColors.errorContainer,
-        surface: AppColors.grey900,
-        onSurface: AppColors.grey50,
-        surfaceContainerHighest: AppColors.grey800,
-        onSurfaceVariant: AppColors.grey300,
-        outline: AppColors.grey600,
-        outlineVariant: AppColors.grey700,
-        shadow: AppColors.black.withValues(alpha: 0.5),
-        scrim: AppColors.black.withValues(alpha: 0.7),
-        inverseSurface: AppColors.grey100,
-        onInverseSurface: AppColors.grey900,
-        inversePrimary: AppColors.primaryPurple,
-      );
+    primary: AppColors.primaryPurpleLight,
+    onPrimary: AppColors.primaryPurpleDark,
+    primaryContainer: AppColors.primaryPurpleDark,
+    onPrimaryContainer: AppColors.purpleContainer,
+    secondary: AppColors.secondary,
+    onSecondary: AppColors.white,
+    secondaryContainer: const Color(0xFF7C2D5F),
+    onSecondaryContainer: AppColors.secondaryContainer,
+    tertiary: AppColors.tertiary,
+    onTertiary: AppColors.white,
+    tertiaryContainer: const Color(0xFF164E63),
+    onTertiaryContainer: AppColors.tertiaryContainer,
+    error: const Color(0xFFFF5449),
+    onError: const Color(0xFF690005),
+    errorContainer: const Color(0xFF93000A),
+    onErrorContainer: AppColors.errorContainer,
+    surface: AppColors.grey900,
+    onSurface: AppColors.grey50,
+    surfaceContainerHighest: AppColors.grey800,
+    onSurfaceVariant: AppColors.grey300,
+    outline: AppColors.grey600,
+    outlineVariant: AppColors.grey700,
+    shadow: AppColors.black.withValues(alpha: 0.5),
+    scrim: AppColors.black.withValues(alpha: 0.7),
+    inverseSurface: AppColors.grey100,
+    onInverseSurface: AppColors.grey900,
+    inversePrimary: AppColors.primaryPurple,
+  );
 
   // ============================================================================
   // Light Theme
@@ -83,14 +83,16 @@ class AppTheme {
   /// Complete light theme configuration
   static ThemeData get light {
     final colorScheme = _lightColorScheme;
-    final textTheme = AppTypography.createTextTheme(color: colorScheme.onSurface);
+    final textTheme = AppTypography.createTextTheme(
+      color: colorScheme.onSurface,
+    );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surface,
-      
+
       // AppBar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -285,14 +287,16 @@ class AppTheme {
   /// Complete dark theme configuration
   static ThemeData get dark {
     final colorScheme = _darkColorScheme;
-    final textTheme = AppTypography.createTextTheme(color: colorScheme.onSurface);
+    final textTheme = AppTypography.createTextTheme(
+      color: colorScheme.onSurface,
+    );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surface,
-      
+
       // AppBar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,

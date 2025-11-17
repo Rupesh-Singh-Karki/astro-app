@@ -59,7 +59,7 @@ class AppButton extends StatelessWidget {
             child: buttonChild,
           ),
         );
-      
+
       case AppButtonVariant.outlined:
         return SizedBox(
           width: isFullWidth ? double.infinity : null,
@@ -68,16 +68,13 @@ class AppButton extends StatelessWidget {
             child: buttonChild,
           ),
         );
-      
+
       case AppButtonVariant.text:
         return SizedBox(
           width: isFullWidth ? double.infinity : null,
-          child: TextButton(
-            onPressed: effectiveOnPressed,
-            child: buttonChild,
-          ),
+          child: TextButton(onPressed: effectiveOnPressed, child: buttonChild),
         );
-      
+
       case AppButtonVariant.elevated:
         return SizedBox(
           width: isFullWidth ? double.infinity : null,
@@ -91,9 +88,4 @@ class AppButton extends StatelessWidget {
 }
 
 /// Button variant types
-enum AppButtonVariant {
-  filled,
-  outlined,
-  text,
-  elevated,
-}
+enum AppButtonVariant { filled, outlined, text, elevated }

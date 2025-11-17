@@ -13,27 +13,24 @@ class PlansScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Subscribe'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Subscribe'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
           // Header
           Text(
             'Choose Your Plan',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             'Unlock premium features and get personalized astrology insights',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xl),
@@ -112,9 +109,9 @@ class PlansScreen extends ConsumerWidget {
               children: [
                 Text(
                   '✨ Premium Benefits',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 const _BenefitItem(
@@ -216,9 +213,8 @@ class _PlanCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     if (discount != null)
                       Container(
@@ -228,11 +224,14 @@ class _PlanCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: Colors.green,
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusSM),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusSM,
+                          ),
                         ),
                         child: Text(
                           discount!,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -247,9 +246,9 @@ class _PlanCard extends StatelessWidget {
                     Text(
                       price,
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primaryPurple,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryPurple,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     Padding(
@@ -257,8 +256,8 @@ class _PlanCard extends StatelessWidget {
                       child: Text(
                         period,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],
@@ -294,14 +293,14 @@ class _PlanCard extends StatelessWidget {
                           child: const Text('Current Plan'),
                         )
                       : isPopular
-                          ? FilledButton(
-                              onPressed: onSubscribe,
-                              child: const Text('Subscribe Now'),
-                            )
-                          : OutlinedButton(
-                              onPressed: onSubscribe,
-                              child: const Text('Subscribe Now'),
-                            ),
+                      ? FilledButton(
+                          onPressed: onSubscribe,
+                          child: const Text('Subscribe Now'),
+                        )
+                      : OutlinedButton(
+                          onPressed: onSubscribe,
+                          child: const Text('Subscribe Now'),
+                        ),
                 ),
               ],
             ),
@@ -325,9 +324,9 @@ class _PlanCard extends StatelessWidget {
                 child: Text(
                   badge!,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -341,10 +340,7 @@ class _BenefitItem extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _BenefitItem({
-    required this.icon,
-    required this.text,
-  });
+  const _BenefitItem({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -352,17 +348,10 @@ class _BenefitItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppColors.primaryPurple,
-          ),
+          Icon(icon, size: 20, color: AppColors.primaryPurple),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),

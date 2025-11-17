@@ -17,8 +17,8 @@ class AppLoadingIndicator extends StatelessWidget {
     final indicatorSize = size == AppLoadingSize.small
         ? AppSpacing.iconSizeMedium
         : size == AppLoadingSize.medium
-            ? AppSpacing.iconSizeLarge
-            : AppSpacing.iconSizeXLarge;
+        ? AppSpacing.iconSizeLarge
+        : AppSpacing.iconSizeXLarge;
 
     return Center(
       child: Column(
@@ -39,8 +39,8 @@ class AppLoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -51,19 +51,11 @@ class AppLoadingIndicator extends StatelessWidget {
 }
 
 /// Loading indicator size variants
-enum AppLoadingSize {
-  small,
-  medium,
-  large,
-}
+enum AppLoadingSize { small, medium, large }
 
 /// An error display widget with retry option.
 class AppErrorWidget extends StatelessWidget {
-  const AppErrorWidget({
-    super.key,
-    required this.message,
-    this.onRetry,
-  });
+  const AppErrorWidget({super.key, required this.message, this.onRetry});
 
   final String message;
   final VoidCallback? onRetry;
@@ -91,8 +83,8 @@ class AppErrorWidget extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
@@ -136,22 +128,21 @@ class AppEmptyState extends StatelessWidget {
             Icon(
               icon,
               size: AppSpacing.iconSizeXLarge * 1.5,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             SizedBox(height: AppSpacing.lg),
             Text(
               message,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             if (action != null && actionLabel != null) ...[
               SizedBox(height: AppSpacing.xl),
-              FilledButton(
-                onPressed: action,
-                child: Text(actionLabel!),
-              ),
+              FilledButton(onPressed: action, child: Text(actionLabel!)),
             ],
           ],
         ),

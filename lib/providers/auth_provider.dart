@@ -22,7 +22,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   Future<void> _initializeAuth() async {
     state = const AsyncValue.loading();
     final result = await _repository.getCurrentUser();
-    
+
     state = result.when(
       success: (user) => AsyncValue.data(user),
       failure: (failure) {
@@ -38,11 +38,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     required String password,
   }) async {
     state = const AsyncValue.loading();
-    
-    final result = await _repository.signIn(
-      email: email,
-      password: password,
-    );
+
+    final result = await _repository.signIn(email: email, password: password);
 
     state = result.when(
       success: (user) => AsyncValue.data(user),
@@ -62,7 +59,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     String? name,
   }) async {
     state = const AsyncValue.loading();
-    
+
     final result = await _repository.signUp(
       email: email,
       password: password,
@@ -83,7 +80,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   /// Sign out
   Future<Result<void>> signOut() async {
     final result = await _repository.signOut();
-    
+
     if (result.isSuccess) {
       state = const AsyncValue.data(null);
     }
@@ -94,7 +91,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   /// Update user profile
   Future<Result<User>> updateProfile(User user) async {
     final result = await _repository.updateProfile(user);
-    
+
     if (result.isSuccess) {
       state = AsyncValue.data(result.data);
     }
@@ -109,7 +106,9 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
 }
 
 /// Provider for auth state notifier
-final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((ref) {
+final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((
+  ref,
+) {
   final repository = ref.watch(authRepositoryProvider);
   return AuthNotifier(repository);
 });

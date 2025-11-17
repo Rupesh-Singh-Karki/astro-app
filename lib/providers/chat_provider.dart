@@ -21,9 +21,9 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// Load messages
   Future<void> _loadMessages() async {
     state = const AsyncValue.loading();
-    
+
     final result = await _repository.getMessages();
-    
+
     state = result.when(
       success: (messages) => AsyncValue.data(messages),
       failure: (failure) {
@@ -91,16 +91,18 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 }
 
 /// Provider for chat state notifier
-final chatProvider = StateNotifierProvider<ChatNotifier, AsyncValue<List<ChatMessage>>>((ref) {
-  final repository = ref.watch(chatRepositoryProvider);
-  return ChatNotifier(repository);
-});
+final chatProvider =
+    StateNotifierProvider<ChatNotifier, AsyncValue<List<ChatMessage>>>((ref) {
+      final repository = ref.watch(chatRepositoryProvider);
+      return ChatNotifier(repository);
+    });
 
 /// Provider for unread message count
 final unreadMessagesCountProvider = Provider<int>((ref) {
   final chatState = ref.watch(chatProvider);
   return chatState.when(
-    data: (messages) => messages.where((msg) => !msg.isRead && !msg.fromUser).length,
+    data: (messages) =>
+        messages.where((msg) => !msg.isRead && !msg.fromUser).length,
     loading: () => 0,
     error: (_, __) => 0,
   );

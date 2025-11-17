@@ -111,26 +111,17 @@ class NetworkFailure extends AppFailure {
 
 /// Server-related failure
 class ServerFailure extends AppFailure {
-  const ServerFailure({
-    super.message = 'Server error occurred',
-    super.error,
-  });
+  const ServerFailure({super.message = 'Server error occurred', super.error});
 }
 
 /// Authentication failure
 class AuthFailure extends AppFailure {
-  const AuthFailure({
-    super.message = 'Authentication failed',
-    super.error,
-  });
+  const AuthFailure({super.message = 'Authentication failed', super.error});
 }
 
 /// Not found failure
 class NotFoundFailure extends AppFailure {
-  const NotFoundFailure({
-    super.message = 'Resource not found',
-    super.error,
-  });
+  const NotFoundFailure({super.message = 'Resource not found', super.error});
 }
 
 /// Validation failure
@@ -154,10 +145,7 @@ class PermissionDeniedFailure extends AppFailure {
 
 /// Timeout failure
 class TimeoutFailure extends AppFailure {
-  const TimeoutFailure({
-    super.message = 'Request timed out',
-    super.error,
-  });
+  const TimeoutFailure({super.message = 'Request timed out', super.error});
 }
 
 /// Unexpected/unknown failure

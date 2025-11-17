@@ -61,7 +61,11 @@ class Validators {
   }
 
   /// Validates minimum length
-  static String? minLength(String? value, int min, [String fieldName = 'This field']) {
+  static String? minLength(
+    String? value,
+    int min, [
+    String fieldName = 'This field',
+  ]) {
     if (value == null || value.isEmpty) {
       return '$fieldName is required';
     }
@@ -74,7 +78,11 @@ class Validators {
   }
 
   /// Validates maximum length
-  static String? maxLength(String? value, int max, [String fieldName = 'This field']) {
+  static String? maxLength(
+    String? value,
+    int max, [
+    String fieldName = 'This field',
+  ]) {
     if (value != null && value.length > max) {
       return '$fieldName must be less than $max characters';
     }
@@ -141,7 +149,11 @@ class Validators {
   }
 
   /// Validates that two values match (e.g., password confirmation)
-  static String? matchesValue(String? value, String? otherValue, [String fieldName = 'Fields']) {
+  static String? matchesValue(
+    String? value,
+    String? otherValue, [
+    String fieldName = 'Fields',
+  ]) {
     if (value != otherValue) {
       return '$fieldName do not match';
     }
@@ -162,7 +174,12 @@ class Validators {
   }
 
   /// Validates a number is within a range
-  static String? numberInRange(num? value, num min, num max, [String fieldName = 'Value']) {
+  static String? numberInRange(
+    num? value,
+    num min,
+    num max, [
+    String fieldName = 'Value',
+  ]) {
     if (value == null) {
       return '$fieldName is required';
     }

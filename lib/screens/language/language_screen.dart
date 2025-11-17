@@ -54,12 +54,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
       nativeName: 'Português',
       flag: '🇵🇹',
     ),
-    LanguageOption(
-      code: 'zh',
-      name: 'Chinese',
-      nativeName: '中文',
-      flag: '🇨🇳',
-    ),
+    LanguageOption(code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳'),
     LanguageOption(
       code: 'ja',
       name: 'Japanese',
@@ -71,10 +66,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Language'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Language'), centerTitle: true),
       body: ListView.builder(
         padding: const EdgeInsets.all(AppSpacing.md),
         itemCount: _languages.length,
@@ -96,24 +88,18 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
               title: Text(
                 language.name,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
               subtitle: Text(
                 language.nativeName,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               trailing: isSelected
-                  ? Icon(
-                      Icons.check_circle,
-                      color: AppColors.primaryPurple,
-                    )
-                  : const Icon(
-                      Icons.circle_outlined,
-                      color: Colors.grey,
-                    ),
+                  ? Icon(Icons.check_circle, color: AppColors.primaryPurple)
+                  : const Icon(Icons.circle_outlined, color: Colors.grey),
               onTap: () {
                 setState(() => _selectedLanguage = language.code);
                 ScaffoldMessenger.of(context).showSnackBar(

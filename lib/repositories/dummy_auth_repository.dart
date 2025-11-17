@@ -10,9 +10,7 @@ import '../utils/logger.dart';
 class DummyAuthRepository implements AuthRepository {
   // Simulated in-memory storage
   User? _currentUser;
-  final Map<String, String> _users = {
-    'test@example.com': 'password123',
-  };
+  final Map<String, String> _users = {'test@example.com': 'password123'};
 
   @override
   Future<Result<User>> signIn({
@@ -21,7 +19,7 @@ class DummyAuthRepository implements AuthRepository {
   }) async {
     try {
       AppLogger.info('Attempting sign in for: $email');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -39,9 +37,7 @@ class DummyAuthRepository implements AuthRepository {
       }
 
       AppLogger.warning('Sign in failed: Invalid credentials for $email');
-      return Result.failure(
-        AuthFailure(message: 'Invalid email or password'),
-      );
+      return Result.failure(AuthFailure(message: 'Invalid email or password'));
     } catch (e, stackTrace) {
       AppLogger.error('Sign in error', e, stackTrace);
       return Result.failure(
@@ -58,7 +54,7 @@ class DummyAuthRepository implements AuthRepository {
   }) async {
     try {
       AppLogger.info('Attempting sign up for: $email');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 700));
 
@@ -95,12 +91,12 @@ class DummyAuthRepository implements AuthRepository {
   Future<Result<void>> signOut() async {
     try {
       AppLogger.info('Signing out user: ${_currentUser?.email}');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 300));
 
       _currentUser = null;
-      
+
       AppLogger.info('Sign out successful');
       return Result.success(null);
     } catch (e, stackTrace) {
@@ -115,7 +111,7 @@ class DummyAuthRepository implements AuthRepository {
   Future<Result<User?>> getCurrentUser() async {
     try {
       AppLogger.debug('Getting current user');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 200));
 
@@ -132,7 +128,7 @@ class DummyAuthRepository implements AuthRepository {
   Future<bool> isAuthenticated() async {
     try {
       AppLogger.debug('Checking authentication status');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 100));
 
@@ -147,7 +143,7 @@ class DummyAuthRepository implements AuthRepository {
   Future<Result<void>> sendPasswordResetEmail(String email) async {
     try {
       AppLogger.info('Sending password reset email to: $email');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -175,7 +171,7 @@ class DummyAuthRepository implements AuthRepository {
   Future<Result<User>> updateProfile(User user) async {
     try {
       AppLogger.info('Updating profile for user: ${user.email}');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -186,7 +182,7 @@ class DummyAuthRepository implements AuthRepository {
       }
 
       _currentUser = user;
-      
+
       AppLogger.info('Profile updated successfully for: ${user.email}');
       return Result.success(_currentUser!);
     } catch (e, stackTrace) {

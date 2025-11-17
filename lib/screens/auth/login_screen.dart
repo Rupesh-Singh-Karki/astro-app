@@ -39,7 +39,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await ref.read(authProvider.notifier).signIn(
+      final result = await ref
+          .read(authProvider.notifier)
+          .signIn(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -72,9 +74,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void _navigateToSignup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const SignupScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const SignupScreen()));
   }
 
   @override
@@ -107,7 +109,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Text(
                       'TrustAstrology',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w700,
                           ),
@@ -117,8 +120,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       'Your Cosmic Companion',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     SizedBox(height: AppSpacing.xxxl),
 

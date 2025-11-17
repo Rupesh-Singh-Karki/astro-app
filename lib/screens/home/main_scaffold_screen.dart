@@ -63,19 +63,18 @@ class _MainScaffoldScreenState extends ConsumerState<MainScaffoldScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: _onNavTap,
         destinations: _navItems
-            .map((item) => NavigationDestination(
-                  icon: item.icon,
-                  selectedIcon: item.activeIcon,
-                  label: item.label!,
-                ))
+            .map(
+              (item) => NavigationDestination(
+                icon: item.icon,
+                selectedIcon: item.activeIcon,
+                label: item.label!,
+              ),
+            )
             .toList(),
       ),
     );

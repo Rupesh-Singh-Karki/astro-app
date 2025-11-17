@@ -49,9 +49,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final chatState = ref.watch(chatProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat with Astrologer'),
-      ),
+      appBar: AppBar(title: const Text('Chat with Astrologer')),
       body: Column(
         children: [
           Expanded(
@@ -73,7 +71,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   },
                 );
               },
-              loading: () => const AppLoadingIndicator(message: 'Loading messages...'),
+              loading: () =>
+                  const AppLoadingIndicator(message: 'Loading messages...'),
               error: (error, _) => AppErrorWidget(
                 message: 'Failed to load messages',
                 onRetry: () => ref.invalidate(chatProvider),
@@ -133,10 +132,16 @@ class _MessageBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
-          color: isUser ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+          color: isUser
+              ? colorScheme.primary
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLG).copyWith(
-            bottomLeft: Radius.circular(isUser ? AppSpacing.radiusLG : AppSpacing.radiusXS),
-            bottomRight: Radius.circular(isUser ? AppSpacing.radiusXS : AppSpacing.radiusLG),
+            bottomLeft: Radius.circular(
+              isUser ? AppSpacing.radiusLG : AppSpacing.radiusXS,
+            ),
+            bottomRight: Radius.circular(
+              isUser ? AppSpacing.radiusXS : AppSpacing.radiusLG,
+            ),
           ),
         ),
         child: Text(

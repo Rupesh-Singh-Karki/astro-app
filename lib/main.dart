@@ -8,11 +8,7 @@ import 'screens/home/main_scaffold_screen.dart';
 
 /// Entry point of the application
 void main() {
-  runApp(
-    const ProviderScope(
-      child: TrustAstrologyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: TrustAstrologyApp()));
 }
 
 /// Root widget of the application

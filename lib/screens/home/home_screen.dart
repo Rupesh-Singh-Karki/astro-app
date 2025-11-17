@@ -14,9 +14,7 @@ class HomeScreen extends ConsumerWidget {
     final displayName = user?.displayName ?? 'Explorer';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TrustAstrology'),
-      ),
+      appBar: AppBar(title: const Text('TrustAstrology')),
       body: ListView(
         padding: EdgeInsets.all(AppSpacing.lg),
         children: [
@@ -45,8 +43,11 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             Text(
                               'Your cosmic journey awaits',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
@@ -61,10 +62,7 @@ class HomeScreen extends ConsumerWidget {
           SizedBox(height: AppSpacing.lg),
 
           // Quick Actions
-          Text(
-            'Quick Actions',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
           SizedBox(height: AppSpacing.md),
 
           Row(
@@ -123,15 +121,12 @@ class _QuickActionCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               SizedBox(height: AppSpacing.sm),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text(label, style: Theme.of(context).textTheme.titleMedium),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),

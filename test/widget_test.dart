@@ -6,15 +6,23 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:astrology/main.dart';
 
 void main() {
   testWidgets('App renders Login screen', (tester) async {
-    await tester.pumpWidget(const TrustAstrologyApp());
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: TrustAstrologyApp(),
+      ),
+    );
+    
+    // Wait for all async operations to complete
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle();
 
     expect(find.text('TrustAstrology'), findsOneWidget);
-    expect(find.text('Start Chat with Your Astrologer'), findsNothing);
+    expect(find.text('Welcome Back'), findsOneWidget);
   });
 }

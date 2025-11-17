@@ -19,7 +19,7 @@ class DummyChatRepository implements ChatRepository {
   Future<Result<List<ChatMessage>>> getMessages() async {
     try {
       AppLogger.debug('Fetching messages');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 300));
 
@@ -35,8 +35,10 @@ class DummyChatRepository implements ChatRepository {
   @override
   Future<Result<ChatMessage>> sendMessage(String text) async {
     try {
-      AppLogger.info('Sending message: ${text.substring(0, text.length > 50 ? 50 : text.length)}');
-      
+      AppLogger.info(
+        'Sending message: ${text.substring(0, text.length > 50 ? 50 : text.length)}',
+      );
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 400));
 
@@ -70,7 +72,7 @@ class DummyChatRepository implements ChatRepository {
   }) async {
     try {
       AppLogger.debug('Fetching chat history (limit: $limit)');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 300));
 
@@ -89,7 +91,7 @@ class DummyChatRepository implements ChatRepository {
   Future<Result<void>> markAsRead(List<String> messageIds) async {
     try {
       AppLogger.debug('Marking ${messageIds.length} messages as read');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 200));
 
@@ -113,7 +115,7 @@ class DummyChatRepository implements ChatRepository {
   Future<Result<void>> deleteMessage(String messageId) async {
     try {
       AppLogger.info('Deleting message: $messageId');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 300));
 
@@ -133,7 +135,7 @@ class DummyChatRepository implements ChatRepository {
   Future<Result<void>> clearMessages() async {
     try {
       AppLogger.info('Clearing all messages');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 300));
 
@@ -155,11 +157,14 @@ class DummyChatRepository implements ChatRepository {
 
     if (lowerMessage.contains('career') || lowerMessage.contains('job')) {
       return 'Your professional path is illuminated by cosmic alignments. Focus on opportunities appearing in the coming weeks. ✨';
-    } else if (lowerMessage.contains('love') || lowerMessage.contains('relationship')) {
+    } else if (lowerMessage.contains('love') ||
+        lowerMessage.contains('relationship')) {
       return 'The stars suggest a period of emotional growth. Keep your heart open to new possibilities! 💫';
-    } else if (lowerMessage.contains('health') || lowerMessage.contains('wellness')) {
+    } else if (lowerMessage.contains('health') ||
+        lowerMessage.contains('wellness')) {
       return 'Balance is key for your well-being. The planetary positions encourage mindful practices and self-care. 🌟';
-    } else if (lowerMessage.contains('finance') || lowerMessage.contains('money')) {
+    } else if (lowerMessage.contains('finance') ||
+        lowerMessage.contains('money')) {
       return 'Financial stability is within reach. The cosmic energies support careful planning and wise decisions. 💰';
     } else {
       return 'Thank you for your question. The celestial bodies reveal interesting insights about your journey. Would you like to know more? ✨';

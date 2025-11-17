@@ -60,13 +60,21 @@ class AppLogger {
   }
 
   /// Log an API request
-  static void logRequest(String method, String url, {Map<String, dynamic>? data}) {
-    _loggerNoStack.d('🌐 API Request: $method $url${data != null ? '\nData: $data' : ''}');
+  static void logRequest(
+    String method,
+    String url, {
+    Map<String, dynamic>? data,
+  }) {
+    _loggerNoStack.d(
+      '🌐 API Request: $method $url${data != null ? '\nData: $data' : ''}',
+    );
   }
 
   /// Log an API response
   static void logResponse(int statusCode, String url, {dynamic data}) {
-    _loggerNoStack.d('✅ API Response: $statusCode $url${data != null ? '\nData: $data' : ''}');
+    _loggerNoStack.d(
+      '✅ API Response: $statusCode $url${data != null ? '\nData: $data' : ''}',
+    );
   }
 
   /// Log an API error
@@ -81,11 +89,15 @@ class AppLogger {
 
   /// Log a user action
   static void logUserAction(String action, {Map<String, dynamic>? data}) {
-    _loggerNoStack.i('👤 User Action: $action${data != null ? '\nData: $data' : ''}');
+    _loggerNoStack.i(
+      '👤 User Action: $action${data != null ? '\nData: $data' : ''}',
+    );
   }
 
   /// Log a state change
   static void logStateChange(String state, {dynamic data}) {
-    _loggerNoStack.d('🔄 State Change: $state${data != null ? '\nData: $data' : ''}');
+    _loggerNoStack.d(
+      '🔄 State Change: $state${data != null ? '\nData: $data' : ''}',
+    );
   }
 }
