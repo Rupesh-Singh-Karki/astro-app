@@ -12,12 +12,8 @@ import 'package:astrology/main.dart';
 
 void main() {
   testWidgets('App renders Login screen', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: TrustAstrologyApp(),
-      ),
-    );
-    
+    await tester.pumpWidget(const ProviderScope(child: TrustAstrologyApp()));
+
     // Wait for all async operations to complete
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle();
