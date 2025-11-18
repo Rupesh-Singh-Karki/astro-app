@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'theme/app_theme.dart';
-import 'providers/auth_provider.dart';
+import 'providers/auth_state_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/main_scaffold_screen.dart';
 
@@ -17,7 +17,17 @@ class TrustAstrologyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    final authState = ref.watch(authStateProvider);
+
+    // Show loading screen while checking authentication
+    if (authState.isLoading) {
+      return MaterialApp(
+        title: 'TrustAstrology',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
 
     return MaterialApp(
       title: 'TrustAstrology',
@@ -25,7 +35,9 @@ class TrustAstrologyApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.light, // Can be changed to ThemeMode.system
-      home: isAuthenticated ? const MainScaffoldScreen() : const LoginScreen(),
+      home: authState.isAuthenticated
+          ? const MainScaffoldScreen()
+          : const LoginScreen(),
     );
   }
 }

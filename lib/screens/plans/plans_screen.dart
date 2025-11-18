@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'plan_detail_screen.dart';
 
 /// Subscription plans screen.
 ///
@@ -70,7 +71,24 @@ class PlansScreen extends ConsumerWidget {
             ],
             isPopular: true,
             onSubscribe: () {
-              _showSubscriptionDialog(context, 'Monthly', '\$9.99/month');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlanDetailScreen(
+                    planTitle: 'Monthly',
+                    price: '\$9.99',
+                    period: 'per month',
+                    features: [
+                      'Unlimited chat with astrologer',
+                      'Detailed birth chart analysis',
+                      'Daily personalized insights',
+                      'Relationship compatibility',
+                      'Priority support',
+                      'Ad-free experience',
+                    ],
+                  ),
+                ),
+              );
             },
           ),
           const SizedBox(height: AppSpacing.md),
@@ -92,7 +110,25 @@ class PlansScreen extends ConsumerWidget {
             isPopular: false,
             badge: 'BEST VALUE',
             onSubscribe: () {
-              _showSubscriptionDialog(context, 'Yearly', '\$79.99/year');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlanDetailScreen(
+                    planTitle: 'Yearly',
+                    price: '\$79.99',
+                    period: 'per year',
+                    discount: 'Save 33%',
+                    features: [
+                      'Everything in Monthly',
+                      'Annual forecast report',
+                      'Personalized remedies',
+                      'Exclusive webinars',
+                      '1-on-1 consultation (30 min)',
+                      'Gemstone recommendations',
+                    ],
+                  ),
+                ),
+              );
             },
           ),
           const SizedBox(height: AppSpacing.xl),
@@ -137,37 +173,6 @@ class PlansScreen extends ConsumerWidget {
       ),
     );
   }
-}
-
-void _showSubscriptionDialog(BuildContext context, String plan, String price) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Subscribe to $plan Plan'),
-      content: Text(
-        'You are about to subscribe to the $plan plan at $price.\n\n'
-        'This is a demo app, so no actual payment will be processed.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Subscribed to $plan plan successfully! 🎉'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          },
-          child: const Text('Subscribe'),
-        ),
-      ],
-    ),
-  );
 }
 
 class _PlanCard extends StatelessWidget {

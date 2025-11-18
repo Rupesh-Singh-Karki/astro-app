@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../providers/auth_provider.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/validators.dart';
 import '../../utils/logger.dart';
-import 'signup_screen.dart';
+import '../../providers/api_provider.dart';
+import 'otp_verification_screen.dart';
 
 /// Login screen for user authentication.
 ///
-/// Provides email/password authentication with form validation.
+/// Provides email-based authentication with OTP verification.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -22,39 +22,44 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleSendOtp() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final result = await ref
-          .read(authProvider.notifier)
-          .signIn(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          );
+      final authApiService = ref.read(authApiServiceProvider);
+      final result = await authApiService.sendOtp(_emailController.text.trim());
 
       if (!mounted) return;
 
       result.when(
-        success: (_) {
-          AppLogger.info('Login successful');
-          // Navigation is handled automatically by the provider
+        success: (data) {
+          AppLogger.info('OTP sent to ${_emailController.text.trim()}');
+
+          // Navigate to OTP verification screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  OtpVerificationScreen(email: _emailController.text.trim()),
+            ),
+          );
         },
         failure: (failure) {
-          _showErrorSnackBar(failure.displayMessage);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(failure.displayMessage),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
         },
       );
     } finally {
@@ -62,21 +67,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ),
-    );
-  }
-
-  void _navigateToSignup() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const SignupScreen()));
   }
 
   @override
@@ -133,8 +123,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              'Welcome Back',
+                              'Sign In or Create Account',
                               style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            SizedBox(height: AppSpacing.sm),
+                            Text(
+                              'Enter your email to receive a verification code',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                             SizedBox(height: AppSpacing.lg),
 
@@ -148,46 +146,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               validator: Validators.email,
                               enabled: !_isLoading,
                             ),
-                            SizedBox(height: AppSpacing.lg),
-
-                            // Password Field
-                            AppTextField(
-                              label: 'Password',
-                              controller: _passwordController,
-                              hintText: 'Enter your password',
-                              prefixIcon: Icons.lock_outlined,
-                              obscureText: _obscurePassword,
-                              validator: (value) =>
-                                  Validators.required(value, 'Password'),
-                              enabled: !_isLoading,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                            ),
                             SizedBox(height: AppSpacing.xxl),
 
-                            // Login Button
+                            // Send OTP Button
                             AppButton(
-                              onPressed: _isLoading ? null : _handleLogin,
-                              label: 'Sign In',
+                              onPressed: _isLoading ? null : _handleSendOtp,
+                              label: 'Send Verification Code',
                               isLoading: _isLoading,
-                            ),
-                            SizedBox(height: AppSpacing.md),
-
-                            // Signup Link
-                            AppButton(
-                              onPressed: _isLoading ? null : _navigateToSignup,
-                              label: 'Create Account',
-                              variant: AppButtonVariant.text,
                             ),
                           ],
                         ),

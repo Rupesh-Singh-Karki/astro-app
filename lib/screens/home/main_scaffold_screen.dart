@@ -20,13 +20,23 @@ class MainScaffoldScreen extends ConsumerStatefulWidget {
 class _MainScaffoldScreenState extends ConsumerState<MainScaffoldScreen> {
   int _currentIndex = 0;
 
-  static final List<Widget> _screens = [
-    const HomeScreen(),
-    const ChatScreen(),
-    const LanguageScreen(),
-    const PlansScreen(),
-    const SettingsScreen(),
-  ];
+  final List<Widget> _screens = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _screens.addAll([
+      HomeScreen(onNavigateToChat: () => setState(() => _currentIndex = 1)),
+      const ChatScreen(),
+      const LanguageScreen(),
+      const PlansScreen(),
+      SettingsScreen(
+        onNavigateToLanguage: () {
+          setState(() => _currentIndex = 2); // Navigate to Language tab
+        },
+      ),
+    ]);
+  }
 
   static const List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(
