@@ -12,7 +12,8 @@ class AppConfig {
   static const String developmentApiUrl = 'http://localhost:8000';
 
   /// Android emulator API URL
-  static const String androidEmulatorApiUrl = 'https://astro-server-29.onrender.com';
+  static const String androidEmulatorApiUrl =
+      'https://astro-server-29.onrender.com';
 
   /// Environment mode - can be overridden with --dart-define=ENV=production
   /// Auto-detects: release builds = production, debug builds = development
