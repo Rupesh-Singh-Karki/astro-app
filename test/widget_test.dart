@@ -23,7 +23,10 @@ void main() {
 
     expect(find.text('TrustAstrology'), findsOneWidget);
     expect(find.text('Sign In or Create Account'), findsOneWidget);
-    expect(find.text('Enter your email to receive a verification code'), findsOneWidget);
+    expect(
+      find.text('Enter your email to receive a verification code'),
+      findsOneWidget,
+    );
     expect(find.byType(TextField), findsOneWidget);
   });
 }
