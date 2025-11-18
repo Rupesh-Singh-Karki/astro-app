@@ -324,8 +324,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: AppSpacing.lg),
 
             // Gender
-            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
+              // ignore: deprecated_member_use
               value: _gender,
               decoration: const InputDecoration(
                 labelText: 'Gender',
@@ -343,8 +343,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: AppSpacing.lg),
 
             // Marital Status
-            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
+              // ignore: deprecated_member_use
               value: _maritalStatus,
               decoration: const InputDecoration(
                 labelText: 'Marital Status',
@@ -425,8 +425,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: AppSpacing.lg),
 
             // Timezone
-            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
+              // ignore: deprecated_member_use
               value: _timezone,
               decoration: const InputDecoration(
                 labelText: 'Timezone',
