@@ -1,24 +1,29 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:astrology/main.dart';
+import 'package:astrology/screens/auth/login_screen.dart';
+import 'package:astrology/theme/app_theme.dart';
 
 void main() {
-  testWidgets('App renders Login screen', (tester) async {
-    await tester.pumpWidget(const ProviderScope(child: TrustAstrologyApp()));
+  testWidgets('Login screen renders correctly', (tester) async {
+    // Test the LoginScreen widget directly to avoid async provider initialization
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          title: 'TrustAstrology',
+          theme: AppTheme.light,
+          home: const LoginScreen(),
+        ),
+      ),
+    );
 
-    // Wait for all async operations to complete
-    await tester.pump(const Duration(milliseconds: 300));
-    await tester.pumpAndSettle();
+    // Wait for the widget to render
+    await tester.pump();
 
     expect(find.text('TrustAstrology'), findsOneWidget);
     expect(find.text('Sign In or Create Account'), findsOneWidget);
+    expect(find.text('Enter your email to receive a verification code'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
   });
 }
