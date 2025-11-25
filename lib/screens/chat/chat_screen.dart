@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/real_chat_provider.dart';
@@ -7,6 +8,40 @@ import '../../components/app_widgets.dart';
 import '../../theme/app_spacing.dart';
 import '../../models/chat_message.dart';
 import '../../utils/logger.dart';
+
+/// Helper to show styled snackbar
+void showStyledSnackBar(
+  ScaffoldMessengerState messenger, {
+  required String message,
+  IconData icon = Icons.check_circle,
+  Color? backgroundColor,
+  bool isError = false,
+}) {
+  messenger.clearSnackBars();
+  messenger.showSnackBar(
+    SnackBar(
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      backgroundColor: isError ? Colors.red.shade700 : Colors.grey.shade800,
+      content: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(isError ? Icons.error : icon, color: Colors.white, size: 20),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(message, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+      duration: const Duration(seconds: 2),
+    ),
+  );
+}
+
+/// Global notifier to close any open action menus
+final _closeActionMenuNotifier = ValueNotifier<int>(0);
 
 /// Chat screen for messaging with astrologer
 class ChatScreen extends ConsumerStatefulWidget {
@@ -19,6 +54,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
+  late final ScaffoldMessengerState _scaffoldMessenger;
 
   // User profile data needed for API calls
   Map<String, dynamic>? _userProfile;
@@ -28,9 +64,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool _isProcessingQuestion = false; // Flag to prevent concurrent processing
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldMessenger = ScaffoldMessenger.of(context);
+  }
+
+  @override
   void initState() {
     super.initState();
     _loadUserProfile();
+    // Close action menus on scroll
+    _scrollController.addListener(_onScroll);
 
     // Listen to predefined question changes
     ref.listenManual(predefinedQuestionProvider, (previous, next) {
@@ -42,22 +86,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         _isProcessingQuestion = true;
         _lastProcessedQuestion = next;
 
+        // Clear the predefined question from provider immediately to prevent re-triggers
+        ref.read(predefinedQuestionProvider.notifier).state = null;
+
         // Clear and set the message in the text field
         _messageController.clear();
         _messageController.text = next;
 
-        // Clear the predefined question from provider
-        Future.microtask(() {
+        // Auto-send the message after a short delay
+        Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted) {
-            ref.read(predefinedQuestionProvider.notifier).state = null;
-
-            // Auto-send the message after a short delay
-            Future.delayed(const Duration(milliseconds: 300), () {
-              if (mounted) {
-                _sendMessage();
-                _isProcessingQuestion = false;
-              }
-            });
+            _sendMessage();
+            _isProcessingQuestion = false;
           }
         });
       }
@@ -82,13 +122,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           AppLogger.error('Failed to load user profile: ${failure.message}');
 
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Failed to load profile: ${failure.displayMessage}',
-                ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
+            showStyledSnackBar(
+              _scaffoldMessenger,
+              message: 'Failed to load profile: ${failure.displayMessage}',
+              isError: true,
             );
           }
         },
@@ -99,8 +136,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
   }
 
+  void _onScroll() {
+    // Notify all message bubbles to close their action menus
+    _closeActionMenuNotifier.value++;
+  }
+
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -241,9 +284,36 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   itemBuilder: (context, index) {
                     if (index == messages.length) {
                       // Show typing indicator at the end
-                      return _TypingIndicator();
+                      return _TypingIndicator(
+                        key: const ValueKey('typing_indicator'),
+                      );
                     }
-                    return _MessageBubble(message: messages[index]);
+                    final message = messages[index];
+                    final isLastMessage = index == messages.length - 1;
+                    final isAiMessage = !message.fromUser;
+
+                    // Show suggestion prompts after the last AI message
+                    if (isLastMessage && isAiMessage) {
+                      return Column(
+                        key: ValueKey('message_with_suggestions_${message.id}'),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _MessageBubble(message: message),
+                          _SuggestionPrompts(
+                            key: ValueKey('suggestions_${message.id}'),
+                            onPromptSelected: (prompt) {
+                              _messageController.text = prompt;
+                              _sendMessage();
+                            },
+                          ),
+                        ],
+                      );
+                    }
+
+                    return _MessageBubble(
+                      key: ValueKey('message_${message.id}'),
+                      message: message,
+                    );
                   },
                 );
               },
@@ -286,6 +356,106 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
+/// Random suggestion prompts for the user
+const List<String> _suggestionPrompts = [
+  "What does my birth chart say about my career?",
+  "How will this week be for my love life?",
+  "What planetary alignments affect me today?",
+  "Tell me about my moon sign compatibility",
+  "What should I focus on this month?",
+  "How can I improve my financial luck?",
+  "What are my strengths according to my chart?",
+  "Is this a good time for new beginnings?",
+  "What does Mercury retrograde mean for me?",
+  "How does my rising sign influence my personality?",
+  "What are my lucky days this week?",
+  "Should I make major decisions right now?",
+  "What do the stars say about my health?",
+  "How can I balance my energy better?",
+  "What opportunities should I look for?",
+  "Tell me about my Venus placement",
+];
+
+/// Widget to display suggestion prompts after AI response
+class _SuggestionPrompts extends StatefulWidget {
+  const _SuggestionPrompts({super.key, required this.onPromptSelected});
+
+  final void Function(String prompt) onPromptSelected;
+
+  @override
+  State<_SuggestionPrompts> createState() => _SuggestionPromptsState();
+}
+
+class _SuggestionPromptsState extends State<_SuggestionPrompts> {
+  late final List<String> _prompts;
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Generate random prompts only once when widget is created
+    final shuffled = List<String>.from(_suggestionPrompts)..shuffle();
+    _prompts = shuffled.take(4).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _prompts.map((prompt) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.sm),
+            child: GestureDetector(
+              onTap: _isSending
+                  ? null
+                  : () {
+                      if (_isSending) return;
+                      setState(() => _isSending = true);
+                      widget.onPromptSelected(prompt);
+                    },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  border: Border.all(color: Colors.grey.shade500, width: 1.0),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        prompt,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
 /// Helper class for markdown parsing
 class _MarkdownSegment {
   final String text;
@@ -295,10 +465,244 @@ class _MarkdownSegment {
   _MarkdownSegment(this.text, this.isBold, this.isItalic);
 }
 
-class _MessageBubble extends ConsumerWidget {
-  const _MessageBubble({required this.message});
+/// Action button for the message action menu
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.icon,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 44,
+      height: 44,
+      child: IconButton(
+        icon: Icon(icon, size: 20, color: color),
+        onPressed: onPressed,
+        splashRadius: 20,
+      ),
+    );
+  }
+}
+
+class _MessageBubble extends ConsumerStatefulWidget {
+  const _MessageBubble({super.key, required this.message});
 
   final ChatMessage message;
+
+  @override
+  ConsumerState<_MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends ConsumerState<_MessageBubble> {
+  bool _showActions = false;
+  OverlayEntry? _overlayEntry;
+  ScaffoldMessengerState? _scaffoldMessenger;
+
+  @override
+  void initState() {
+    super.initState();
+    _closeActionMenuNotifier.addListener(_onCloseNotified);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldMessenger = ScaffoldMessenger.of(context);
+  }
+
+  @override
+  void dispose() {
+    _closeActionMenuNotifier.removeListener(_onCloseNotified);
+    _removeOverlay();
+    super.dispose();
+  }
+
+  void _onCloseNotified() {
+    if (_showActions) {
+      _removeOverlay();
+      setState(() => _showActions = false);
+    }
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  void _showActionMenu(Offset globalPosition) {
+    // Close any other open menus first
+    _closeActionMenuNotifier.value++;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final overlay = Overlay.of(context);
+    final renderBox = context.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+    final bubblePosition = renderBox.localToGlobal(Offset.zero);
+
+    // Calculate position - show to the right of long press point
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isUser = widget.message.fromUser;
+
+    // Determine x position based on message alignment and available space
+    double left;
+    if (isUser) {
+      // User message is on the right, show menu on the left of the bubble
+      left = bubblePosition.dx - 60;
+    } else {
+      // AI message is on the left, show menu on the right of the bubble
+      left = bubblePosition.dx + size.width + 8;
+    }
+
+    // Ensure menu stays within screen bounds
+    if (left < 8) left = 8;
+    if (left > screenWidth - 60) left = screenWidth - 60;
+
+    // Y position at the long press point
+    double top = globalPosition.dy - 70;
+    if (top < 100) top = 100;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // Tap anywhere to close
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                _removeOverlay();
+                setState(() => _showActions = false);
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+          // Action menu
+          Positioned(
+            left: left,
+            top: top,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ActionButton(
+                      icon: Icons.close,
+                      color: Colors.grey.shade700,
+                      onPressed: () {
+                        _removeOverlay();
+                        setState(() => _showActions = false);
+                      },
+                    ),
+                    _ActionButton(
+                      icon: Icons.copy,
+                      color: Colors.grey.shade700,
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: widget.message.text),
+                        );
+                        _removeOverlay();
+                        setState(() => _showActions = false);
+                        if (_scaffoldMessenger != null) {
+                          showStyledSnackBar(
+                            _scaffoldMessenger!,
+                            message: 'Message copied to clipboard',
+                            icon: Icons.copy,
+                          );
+                        }
+                      },
+                    ),
+                    _ActionButton(
+                      icon: Icons.delete,
+                      color: Colors.red.shade400,
+                      onPressed: () async {
+                        _removeOverlay();
+                        setState(() => _showActions = false);
+
+                        final isUser = widget.message.fromUser;
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              isUser ? 'Unsend Message' : 'Delete Message',
+                            ),
+                            content: const Text(
+                              'Are you sure you want to delete this message? This action cannot be undone.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: colorScheme.error,
+                                ),
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmed == true && mounted) {
+                          final success = await ref
+                              .read(chatMessagesProvider.notifier)
+                              .deleteMessage(widget.message.id);
+
+                          if (_scaffoldMessenger != null) {
+                            if (success) {
+                              showStyledSnackBar(
+                                _scaffoldMessenger!,
+                                message: 'Message deleted',
+                                icon: Icons.delete,
+                              );
+                            } else {
+                              showStyledSnackBar(
+                                _scaffoldMessenger!,
+                                message: 'Failed to delete message',
+                                isError: true,
+                              );
+                            }
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    overlay.insert(_overlayEntry!);
+
+    // Re-listen after incrementing notifier
+    Future.microtask(() {
+      if (mounted) setState(() => _showActions = true);
+    });
+  }
 
   /// Parse simple markdown and return TextSpans
   List<TextSpan> _parseMarkdown(
@@ -416,8 +820,8 @@ class _MessageBubble extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isUser = message.fromUser;
+  Widget build(BuildContext context) {
+    final isUser = widget.message.fromUser;
     final colorScheme = Theme.of(context).colorScheme;
 
     final baseStyle = TextStyle(
@@ -450,7 +854,7 @@ class _MessageBubble extends ConsumerWidget {
       ),
       child: RichText(
         text: TextSpan(
-          children: _parseMarkdown(message.text, baseStyle, boldStyle),
+          children: _parseMarkdown(widget.message.text, baseStyle, boldStyle),
         ),
       ),
     );
@@ -458,52 +862,12 @@ class _MessageBubble extends ConsumerWidget {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
-        onLongPress: () async {
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(isUser ? 'Unsend Message' : 'Delete Message'),
-              content: const Text(
-                'Are you sure you want to delete this message? This action cannot be undone.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorScheme.error,
-                  ),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          );
-
-          if (confirmed == true && context.mounted) {
-            final success = await ref
-                .read(chatMessagesProvider.notifier)
-                .deleteMessage(message.id);
-
-            if (context.mounted) {
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Message deleted'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Failed to delete message'),
-                    backgroundColor: colorScheme.error,
-                  ),
-                );
-              }
-            }
+        onLongPressStart: (details) {
+          if (_showActions) {
+            _removeOverlay();
+            setState(() => _showActions = false);
+          } else {
+            _showActionMenu(details.globalPosition);
           }
         },
         child: bubble,
@@ -675,24 +1039,20 @@ class _ChatSessionsDrawer extends ConsumerWidget {
                                     .deleteSession(session.id);
 
                                 if (context.mounted) {
+                                  final messenger = ScaffoldMessenger.of(
+                                    context,
+                                  );
                                   if (success) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Chat deleted successfully',
-                                        ),
-                                      ),
+                                    showStyledSnackBar(
+                                      messenger,
+                                      message: 'Chat deleted successfully',
+                                      icon: Icons.delete,
                                     );
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text(
-                                          'Failed to delete chat',
-                                        ),
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.error,
-                                      ),
+                                    showStyledSnackBar(
+                                      messenger,
+                                      message: 'Failed to delete chat',
+                                      isError: true,
                                     );
                                   }
                                 }
@@ -719,7 +1079,7 @@ class _ChatSessionsDrawer extends ConsumerWidget {
 
 /// Typing indicator widget that shows when AI is responding
 class _TypingIndicator extends ConsumerWidget {
-  const _TypingIndicator();
+  const _TypingIndicator({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

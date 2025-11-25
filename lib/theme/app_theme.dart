@@ -276,6 +276,14 @@ class AppTheme {
         contentTextStyle: AppTypography.bodyMedium.copyWith(
           color: colorScheme.onInverseSurface,
         ),
+        elevation: 4,
+        showCloseIcon: true,
+        closeIconColor: colorScheme.onInverseSurface,
+        width: 344,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
       ),
     );
   }
@@ -479,6 +487,14 @@ class AppTheme {
         backgroundColor: colorScheme.inverseSurface,
         contentTextStyle: AppTypography.bodyMedium.copyWith(
           color: colorScheme.onInverseSurface,
+        ),
+        elevation: 4,
+        showCloseIcon: true,
+        closeIconColor: colorScheme.onInverseSurface,
+        width: 344,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
         ),
       ),
     );
